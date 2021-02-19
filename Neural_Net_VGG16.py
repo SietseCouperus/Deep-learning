@@ -39,9 +39,20 @@ model.add(Conv2D(512, kernel_size = (3,3), activation = 'relu', padding = 'same'
 model.add(MaxPooling2D(pool_size = (2,2), strides = (2,2), padding = 'same'))
 #Flatten and continue as linear regression
 model.add(Flatten())
-model.add(Dense(4096, activation = 'relu'))
-model.add(Dense(4096, activation = 'relu'))
+model.add(Dense(4096, activation = 'relu', kernel_regularizer = l2(0.0005)))
+model.add(Dropout(0.5))
+model.add(Dense(4096, activation = 'relu', kernel_regularizer = l2(0.0005)))
+model.add(Dropout(0.5))
 model.add(Dense(1, activation = 'sigmoid'))
+
+#specify hyperparameters of optimizer
+SGD_M = SGD(learning_rate = 0.01, momentum = 0.9, nesterov = False, name = 'SGD_M')
+RMSprop = RMSprop(learning_rate = 0.01, rho = 0.9, momentum = 0.9, epsilon = 10^-7, name = 'RMSprop')
+#Specify loss function and optimizer to use
+model.compile(loss = 'binary_crossentropy', optimizer = SGD_M, metrics = ['accuracy'])
+#Specify batch size, number of epochs and what data to use
+model.fit(x_train, y_train, batch_size = 1, epochs = 3, verbose = 2, validation_data = (x_test, y_test))
+
 
 #Things to add:
     # Weight decay
